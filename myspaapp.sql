@@ -1,9 +1,9 @@
-create database DichVuLamDep
+﻿create database DichVuLamDep
 go
 use DichVuLamDep 
 go
 
--- B?ng DichVu
+-- Bảng DichVu
 CREATE TABLE DichVu
 (
     MaDichVu CHAR(10) NOT NULL PRIMARY KEY,
@@ -15,12 +15,12 @@ CREATE TABLE DichVu
     CONSTRAINT CK_DichVu_KhuyenMai CHECK (KhuyenMai >= 0 AND KhuyenMai <= 100)
 );
 
--- B?ng SanPham
+-- Bảng SanPham
 CREATE TABLE SanPham
 (
     MaSanPham CHAR(10) NOT NULL PRIMARY KEY,
     TenSanPham NVARCHAR(50) NOT NULL,
-    Loai NVARCHAR(50) NOT NULL, -- C� th? chi ti?t h?n nh? "Ch?m s�c da", "Trang ?i?m", v.v.
+    Loai NVARCHAR(50) NOT NULL, -- Có thể chi tiết hơn như "Chăm sóc da", "Trang điểm", v.v.
     Gia MONEY NOT NULL,
     MoTa NVARCHAR(MAX) NOT NULL,
     GiamGia SMALLINT NOT NULL DEFAULT 0,
@@ -28,45 +28,45 @@ CREATE TABLE SanPham
     CONSTRAINT CK_SanPham_GiamGia CHECK (GiamGia >= 0 AND GiamGia <= 100)
 );
 
--- B?ng KhachHang
+-- Bảng KhachHang
 CREATE TABLE KhachHang
 (
     MaKhachHang CHAR(10) NOT NULL PRIMARY KEY,
     TenKhachHang NVARCHAR(50) NOT NULL,
-    DiaChi NVARCHAR(100) NOT NULL, -- T?ng ?? d�i ??a ch?
-    SoDienThoaiChinh VARCHAR(20), -- S? ?i?n tho?i ch�nh
+    DiaChi NVARCHAR(100) NOT NULL, -- Tăng độ dài địa chỉ
+    SoDienThoaiChinh VARCHAR(20), -- Số điện thoại chính
 );
 
--- B?ng NhanVien
+-- Bảng NhanVien
 CREATE TABLE NhanVien
 (
     MaNhanVien CHAR(10) NOT NULL PRIMARY KEY,
     TenNhanVien NVARCHAR(50) NOT NULL,
-    ChucVu NVARCHAR(50) NOT NULL, -- T?ng ?? d�i ch?c v?
-    SoDienThoaiChinh VARCHAR(20), -- S? ?i?n tho?i ch�nh
+    ChucVu NVARCHAR(50) NOT NULL, -- Tăng độ dài chức vụ
+    SoDienThoaiChinh VARCHAR(20), -- Số điện thoại chính
 );
 
--- B?ng TaiKhoan (M?t kh?u n�n ???c b?m v� th�m mu?i)
+-- Bảng TaiKhoan (Mật khẩu nên được băm và thêm muối)
 CREATE TABLE TaiKhoan
 (
     MaTaiKhoan CHAR(10) NOT NULL PRIMARY KEY,
-    MatKhauHash VARCHAR(128) NOT NULL, -- L?u tr? m?t kh?u ?� b?m
-    MaNhanVien CHAR(10) NOT NULL UNIQUE, -- M?i nh�n vi�n c� 1 t�i kho?n duy nh?t
+    MatKhauHash VARCHAR(128) NOT NULL, -- Lưu trữ mật khẩu đã băm
+    MaNhanVien CHAR(10) NOT NULL UNIQUE, -- Mỗi nhân viên có 1 tài khoản duy nhất
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
--- B?ng BaoCao (N?u l� b�o c�o ???c t?o ra)
+-- Bảng BaoCao (Nếu là báo cáo được tạo ra)
 CREATE TABLE BaoCao
 (
     MaBaoCao CHAR(10) NOT NULL PRIMARY KEY,
     TenBaoCao NVARCHAR(100) NOT NULL,
     MoTa NVARCHAR(MAX),
-    NgayTao DATETIME NOT NULL DEFAULT GETDATE(), -- Ng�y t?o b�o c�o
+    NgayTao DATETIME NOT NULL DEFAULT GETDATE(), -- Ngày tạo báo cáo
     MaNhanVien CHAR(10) NOT NULL,
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
--- B?ng KhachHang_SoDienThoai (cho ph�p nhi?u s? ?i?n tho?i ph?)
+-- Bảng KhachHang_SoDienThoai (cho phép nhiều số điện thoại phụ)
 CREATE TABLE KhachHang_SoDienThoai
 (
     SoDienThoai VARCHAR(20) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE KhachHang_SoDienThoai
     FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 );
 
--- B?ng NhanVien_SoDienThoai (cho ph�p nhi?u s? ?i?n tho?i ph?)
+-- Bảng NhanVien_SoDienThoai (cho phép nhiều số điện thoại phụ)
 CREATE TABLE NhanVien_SoDienThoai
 (
     SoDienThoai VARCHAR(20) NOT NULL,
@@ -84,14 +84,14 @@ CREATE TABLE NhanVien_SoDienThoai
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
--- B?ng PhieuDichVu
+-- Bảng PhieuDichVu
 CREATE TABLE PhieuDichVu
 (
     MaPhieu CHAR(10) NOT NULL PRIMARY KEY,
-    NgayLapPhieu DATE NOT NULL DEFAULT GETDATE(), -- ??i t�n th�nh NgayLapPhieu cho r� r�ng
-    TongSoLuongMatHang INT NOT NULL DEFAULT 0, -- T?ng s? l??ng s?n ph?m v� d?ch v? trong phi?u
+    NgayLapPhieu DATE NOT NULL DEFAULT GETDATE(), -- Đổi tên thành NgayLapPhieu cho rõ ràng
+    TongSoLuongMatHang INT NOT NULL DEFAULT 0, -- Tổng số lượng sản phẩm và dịch vụ trong phiếu
     TongThanhToan MONEY NOT NULL,
-    TrangThaiThanhToan NVARCHAR(30) NOT NULL, -- V� d?: 'Ch?a thanh to�n', '?� thanh to�n', '?� h?y'
+    TrangThaiThanhToan NVARCHAR(30) NOT NULL, -- Ví dụ: 'Chưa thanh toán', 'Đã thanh toán', 'Đã hủy'
     GhiChu NVARCHAR(MAX),
     MaKhachHang CHAR(10) NOT NULL,
     MaNhanVien CHAR(10) NOT NULL,
@@ -101,16 +101,16 @@ CREATE TABLE PhieuDichVu
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
--- B?ng ChiTietPhieuDichVu (G?p chi ti?t d?ch v? v� s?n ph?m)
+-- Bảng ChiTietPhieuDichVu (Gộp chi tiết dịch vụ và sản phẩm)
 CREATE TABLE ChiTietPhieuDichVu
 (
     MaChiTietPhieuDichVu CHAR(10) NOT NULL PRIMARY KEY,
     MaPhieu CHAR(10) NOT NULL,
-    LoaiChiTiet NVARCHAR(20) NOT NULL, -- 'DichVu' ho?c 'SanPham'
-    MaDichVu CHAR(10), -- NULL n?u l� s?n ph?m
-    MaSanPham CHAR(10), -- NULL n?u l� d?ch v?
+    LoaiChiTiet NVARCHAR(20) NOT NULL, -- 'DichVu' hoặc 'SanPham'
+    MaDichVu CHAR(10), -- NULL nếu là sản phẩm
+    MaSanPham CHAR(10), -- NULL nếu là dịch vụ
     SoLuong INT NOT NULL DEFAULT 1,
-    DonGia MONEY NOT NULL, -- Gi� t?i th?i ?i?m giao d?ch
+    DonGia MONEY NOT NULL, -- Giá tại thời điểm giao dịch
     ThanhTien MONEY NOT NULL, -- SoLuong * DonGia
     GhiChu NVARCHAR(MAX),
     CONSTRAINT CK_CTPDV_LoaiChiTiet CHECK (LoaiChiTiet IN ('DichVu', 'SanPham')),
